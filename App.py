@@ -1,8 +1,5 @@
-
 import streamlit as st
 import pandas as pd
-import folium
-from streamlit_folium import folium_static
 import plotly.express as px
 
 # 데이터 로드 함수
@@ -17,22 +14,6 @@ def load_data():
         'carbon_emission': [100, 200, 150]
     })
     return df
-
-# 지도 생성 함수
-def create_map(df):
-    m = folium.Map(location=[35.1595454, 126.8526012], zoom_start=12)
-    
-    for idx, row in df.iterrows():
-        folium.CircleMarker(
-            location=[row['latitude'], row['longitude']],
-            radius=row['carbon_emission'] / 10,  # 배출량에 따라 크기 조절
-            popup=f"{row['building_name']}<br>탄소 배출량: {row['carbon_emission']}",
-            color='red',
-            fill=True,
-            fillColor='red'
-        ).add_to(m)
-    
-    return m
 
 # 메인 앱
 def main():
@@ -54,8 +35,7 @@ def main():
 
     # 지도 표시
     st.subheader('탄소 배출량 지도')
-    m = create_map(filtered_df)
-    folium_static(m)
+    st.map(filtered_df, latitude='latitude', longitude='longitude', size='carbon_emission')
 
     # 통계 차트
     st.subheader('건물별 탄소 배출량')
