@@ -71,7 +71,8 @@ def main():
     with tab3:
         st.subheader('변수 간 상관관계')
         correlation = filtered_df[list(metric_options.values())].corr()
-        st.dataframe(correlation.style.background_gradient(cmap='coolwarm'))
+        st.dataframe(correlation.round(2))  # 소수점 2자리까지 표시
+        st.write("1에 가까울수록 강한 양의 상관관계, -1에 가까울수록 강한 음의 상관관계를 나타냅니다.")
 
     with tab4:
         st.subheader('데이터 테이블')
