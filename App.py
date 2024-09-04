@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
 
 # 가상의 데이터 생성
 @st.cache_data
@@ -32,32 +31,19 @@ def main():
     filtered_df = df[df['district'].isin(selected_districts)]
 
     # 탭 생성
-    tab1, tab2, tab3 = st.tabs(["지도", "차트", "파이 차트"])
+    tab1, tab2, tab3 = st.tabs(["지도", "차트", "데이터"])
 
     with tab1:
         st.subheader('탄소발자국 지도')
-        fig_map = px.scatter_mapbox(filtered_df, 
-                                    lat="latitude", 
-                                    lon="longitude", 
-                                    size="carbon_emission",
-                                    color="carbon_emission",
-                                    hover_name="district", 
-                                    zoom=11,
-                                    mapbox_style="open-street-map")
-        st.plotly_chart(fig_map)
+        st.map(filtered_df, latitude='latitude', longitude='longitude', size='carbon_emission')
 
     with tab2:
         st.subheader('지역별 탄소 배출량')
-        fig_bar = px.bar(filtered_df, x='district', y='carbon_emission', 
-                         color='energy_efficiency', 
-                         labels={'carbon_emission': '탄소 배출량', 'district': '지역'})
-        st.plotly_chart(fig_bar)
+        st.bar_chart(filtered_df.set_index('district')['carbon_emission'])
 
     with tab3:
-        st.subheader('에너지 효율 등급 분포')
-        fig_pie = px.pie(filtered_df, names='energy_efficiency', values='carbon_emission',
-                         title='에너지 효율 등급별 탄소 배출량 분포')
-        st.plotly_chart(fig_pie)
+        st.subheader('데이터 테이블')
+        st.dataframe(filtered_df)
 
     # 탄소 저감 제안
     st.subheader('탄소 저감을 위한 제안')
