@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import altair as alt
-import folium
 from streamlit_folium import folium_static
 
 # 가상의 데이터 생성 (실제 광산구 동 위치 사용)
