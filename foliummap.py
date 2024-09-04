@@ -5,7 +5,7 @@ import altair as alt
 import folium
 from streamlit_folium import folium_static
 
-# 가상의 데이터 생성
+# 가상의 데이터 생성 (실제 광산구 동 위치 사용)
 @st.cache_data
 def load_data():
     districts = [
@@ -20,26 +20,34 @@ def load_data():
         'population': np.random.randint(5000, 50000, len(districts)),
         'green_area': np.random.randint(1000, 10000, len(districts)),
         'public_transport_usage': np.random.randint(20, 80, len(districts)),
-        'latitude': np.random.uniform(35.1, 35.2, len(districts)),
-        'longitude': np.random.uniform(126.8, 126.9, len(districts))
+        'latitude': [35.1368, 35.1398, 35.1528, 35.1608, 35.1778,
+                     35.1904, 35.1673, 35.1721, 35.2199, 35.2222,
+                     35.1310, 35.1545, 35.1827, 35.1901, 35.1791],
+        'longitude': [126.7928, 126.7958, 126.8088, 126.8168, 126.8338,
+                      126.8206, 126.8658, 126.8741, 126.8465, 126.8554,
+                      126.7933, 126.8229, 126.8379, 126.8249, 126.7960]
     }
     df = pd.DataFrame(data)
     df['carbon_per_capita'] = df['carbon_emission'] / (df['population'] / 1000)
     return df
 
 def create_map(df, metric):
-    m = folium.Map(location=[35.16, 126.85], zoom_start=12, tiles="CartoDB positron")
-    
-    for _, row in df.iterrows():
+    # 광산구의 대략적인 중심 좌표
+    gwangsan_center = [35.1595, 126.7931]
+
+    m = folium.Map(location=gwangsan_center, zoom_start=12)
+
+    # 각 동의 위치에 마커 추가
+    for idx, row in df.iterrows():
         folium.CircleMarker(
             location=[row['latitude'], row['longitude']],
-            radius=row[metric]/10,  # 크기 조정이 필요할 수 있습니다
-            popup=f"{row['district']}: {row[metric]:.2f}",
+            radius=row[metric]/10,  # 지표값에 따라 원의 크기 조절
+            popup=f"{row['district']}: {row[metric]}",
             color='red',
             fill=True,
             fillColor='red'
         ).add_to(m)
-    
+
     return m
 
 def main():
