@@ -106,17 +106,16 @@ def main():
 
     if district1 and district2:
         comparison_df = df[df['district'].isin([district1, district2])]
-        comparison_chart = alt.Chart(comparison_df).mark_bar().encode(
+        chart = alt.Chart(comparison_df).mark_bar().encode(
             x='district',
             y=alt.Y(metric_options[selected_metric], title=selected_metric),
             color='district',
-            column='variable',
-            tooltip=['district', 'variable', 'value']
-        ).transform_fold(
-            list(metric_options.values()),
-            as_=['variable', 'value']
-        ).interactive()
-        st.altair_chart(comparison_chart, use_container_width=True)
+            tooltip=['district', metric_options[selected_metric]]
+        ).properties(
+            width=600,
+            height=400
+        )
+        st.altair_chart(chart, use_container_width=True)
 
 if __name__ == "__main__":
     main()
